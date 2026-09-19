@@ -1,0 +1,12 @@
+{
+  // Cloudflare Workers with static assets. `name` must match the Worker in the dashboard.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sax-demo",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true }
+}

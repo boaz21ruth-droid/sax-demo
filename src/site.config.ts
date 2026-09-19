@@ -12,8 +12,8 @@ export const site = {
   // Once the client has chosen, set `theme` above and turn this off.
   themeSwitcher: true,
   email: 'booking@example.com',
-  // The booking form posts to the Cloudflare Pages Function in
-  // functions/api/booking.ts. See "预约表单" in the README for its settings.
+  // The booking form posts to the Cloudflare Worker route handled in
+  // worker/booking.ts. See "预约表单" in the README for its settings.
   formEndpoint: '/api/booking',
   // Optional bot check. Paste a Cloudflare Turnstile site key to switch it on
   // (and set TURNSTILE_SECRET in the Pages project). Leave empty to disable.

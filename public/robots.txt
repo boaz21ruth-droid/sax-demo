@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://example.com/sitemap-index.xml
+Sitemap: https://sax-demo.boaz21ruth.workers.dev/sitemap-index.xml

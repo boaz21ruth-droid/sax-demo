@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 // Change `site` to the production domain before deploying (used for canonical
 // URLs, Open Graph, hreflang and the sitemap).
 export default defineConfig({
-  site: 'https://example.com',
+  site: 'https://sax-demo.boaz21ruth.workers.dev',
   trailingSlash: 'always',
   i18n: {
     locales: ['km', 'en', 'zh'],

@@ -1,7 +1,7 @@
 # 萨克斯手个人网站 Demo
 
 单页长滚动的艺人网站：Hero、简介、乐器、视频、相册、专辑、演出日程、预约表单。
-Astro 静态生成 + Tailwind CSS，English / 中文 / ខ្មែរ（高棉语）三语，部署到 Cloudflare Pages。
+Astro 静态生成 + Tailwind CSS，English / 中文 / ខ្មែរ（高棉语）三语，部署到 Cloudflare Workers（静态资源 + 一个表单接口）。
 
 > 现在站内的名字（Vann Rivers）、文案、图片、专辑、演出全部是占位内容，
 > 图片由 `scripts/make-placeholders.mjs` 程序绘制，没有使用任何第三方素材。
@@ -155,8 +155,9 @@ Lighthouse（移动端，本地预览）：A、C 四项 100；B 性能 98；高�
 
 ## 预约表单
 
-网站是纯静态的，没有自己的后端。唯一需要服务端的是「把预约表单发到邮箱」，由一个
-Cloudflare Pages Function 完成：`functions/api/booking.ts`，和网站同仓库、同一次部署，不用另外运维。
+网站是纯静态的，没有自己的后端。唯一需要服务端的是「把预约表单发到邮箱」，由同一个 Cloudflare Worker 里的
+一小段代码完成：`worker/booking.ts`，和网站同仓库、同一次部署，不用另外运维。
+（`dist/` 里的页面由 Cloudflare 直接当静态文件返回，不经过代码；只有 `/api/booking` 会进到 `worker/index.ts`。）
 
 流程：表单 POST 到 `/api/booking` → 函数校验字段、拦截机器人 → 通过 [Resend](https://resend.com) 发邮件到艺人邮箱，
 邮件的「回复」地址就是填表人的邮箱，直接回信即可。
@@ -164,7 +165,7 @@ Cloudflare Pages Function 完成：`functions/api/booking.ts`，和网站同仓�
 ### 上线设置
 
 1. 注册 Resend（免费额度每月 3000 封），在 Domains 里验证客户的域名（按提示到 Cloudflare DNS 加几条记录），建一个 API Key
-2. Cloudflare Pages 项目 → Settings → Variables and Secrets，添加：
+2. Cloudflare 后台 → Workers & Pages → sax-demo → Settings → Variables and Secrets，添加：
 
    | 名称 | 类型 | 值 |
    | --- | --- | --- |
@@ -172,7 +173,7 @@ Cloudflare Pages Function 完成：`functions/api/booking.ts`，和网站同仓�
    | `BOOKING_TO` | 文本 | 收预约的邮箱 |
    | `BOOKING_FROM` | 文本 | 发件人，必须是已验证域名下的地址，如 `Website <website@artist.com>` |
 
-3. 重新部署一次让变量生效
+3. 保存时选 Deploy，变量立即生效
 
 没配置这三个变量时，函数返回 503，页面提示「发送失败，请直接发邮件到 …」，不会丢数据也不会报错白屏。
 
@@ -180,17 +181,17 @@ Cloudflare Pages Function 完成：`functions/api/booking.ts`，和网站同仓�
 
 - 蜜罐字段（隐藏的 `website` 输入框，机器人会填，真人看不到）和字段长度 / 格式校验，默认开启
 - 可选 Cloudflare Turnstile 人机验证：在 Cloudflare 建一个 Turnstile widget，把 site key 填到
-  `src/site.config.ts` 的 `turnstileSiteKey`，secret 加到 Pages 变量 `TURNSTILE_SECRET`。
+  `src/site.config.ts` 的 `turnstileSiteKey`，secret 加到 Worker 变量 `TURNSTILE_SECRET`。
   验证脚本只在访客点进表单时才加载，不影响首屏速度。先不开也行，垃圾邮件多了再开
 
 ### 本地测试
 
-`npm run dev` 不会运行 Pages Function（提交会显示「发送失败」，属正常）。要连函数一起测：
+`npm run dev` 只跑 Astro，不跑 Worker（提交会显示「发送失败」，属正常）。要连表单接口一起测：
 
 ```bash
 cp .dev.vars.example .dev.vars   # 填入真实的 Resend key 和邮箱；该文件已在 .gitignore 里
 npm run build
-npx wrangler pages dev dist      # http://localhost:8788
+npx wrangler dev                 # http://localhost:8787 ，读取 wrangler.jsonc
 ```
 
 ### Telegram / WhatsApp 按钮
@@ -199,26 +200,22 @@ npx wrangler pages dev dist      # http://localhost:8788
 删掉某一行，对应按钮就不显示。WhatsApp 会带上一句预填的问候语（`src/i18n/ui.ts` 的 `contact.chatMessage`）。
 手机上这两个按钮排在表单前面。
 
-## 部署到 Cloudflare Pages
+## 部署（Cloudflare Workers）
 
-1. 推到 GitHub：
+线上地址：<https://sax-demo.boaz21ruth.workers.dev>（Cloudflare 已连接 GitHub 仓库，`git push` 到 `main` 自动构建部署）。
 
-   ```bash
-   git init && git add -A && git commit -m "Initial demo"
-   git remote add origin git@github.com:<user>/<repo>.git
-   git push -u origin main
-   ```
+- 配置在 `wrangler.jsonc`：`name` 要和后台的 Worker 名一致；`assets.directory` 指向 `dist`；`main` 是表单接口的入口
+- 后台 Settings → Build：Build command `npm run build`，Deploy command `npx wrangler deploy`；环境变量 `NODE_VERSION` = `22`
+- 手动部署（不经过 GitHub）：`npm run build && npx wrangler deploy`
+- 非 `main` 分支的推送会生成预览地址，可以先发给客户确认再合并
 
-2. Cloudflare Dashboard → Workers & Pages → Create → Pages → 连接这个仓库
-   - Framework preset：Astro
-   - Build command：`npm run build`
-   - Output directory：`dist`
-   - 环境变量：`NODE_VERSION` = `22`，以及「预约表单」一节里的三个邮件变量
-   - `functions/` 目录会被 Pages 自动识别并部署，不需要额外配置
-3. 域名：把域名的 NS 转到 Cloudflare，然后在 Pages 项目的 Custom domains 里加根域名和 `www`。
-   再到 Rules → Redirect Rules 建一条，把 `www` 301 到根域名（或者反过来，统一一个就行）。
-4. 上线前把 `astro.config.mjs` 里的 `site` 和 `public/robots.txt` 里的域名换成正式域名，
-   canonical、Open Graph、hreflang、sitemap 都依赖它。
+### 绑定正式域名
+
+1. 把域名的 NS 转到 Cloudflare
+2. Worker → Settings → Domains & Routes → Add → Custom domain，加根域名和 `www`
+3. Rules → Redirect Rules 建一条，把 `www` 301 到根域名（或者反过来，统一一个就行）
+4. 把 `astro.config.mjs` 里的 `site` 和 `public/robots.txt` 里的域名换成正式域名，
+   canonical、Open Graph、hreflang、sitemap 都依赖它
 
 根路径 `/` 由 `src/pages/index.astro` 处理：按访客浏览器语言跳到 `/km/`、`/en/` 或 `/zh/`，都不匹配时去默认语言 `/km/`。
 默认语言在 `src/i18n/ui.ts` 的 `defaultLocale` 和 `astro.config.mjs` 的两处 `defaultLocale`，三处要一致。
@@ -239,7 +236,9 @@ npx wrangler pages dev dist      # http://localhost:8788
 ## 目录
 
 ```
-functions/api/booking.ts   预约表单的服务端函数（Cloudflare Pages Function）
+wrangler.jsonc             Cloudflare Workers 部署配置
+worker/index.ts            Worker 入口：/api/booking 交给 booking.ts，其余走静态文件
+worker/booking.ts          预约表单：校验 + 通过 Resend 发邮件
 src/
   site.config.ts        艺名、邮箱、社交链接、聊天账号、Turnstile、默认主题和切换条开关
   content.config.ts     内容字段定义（写错字段构建时会报错并指出位置）

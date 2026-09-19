@@ -1,23 +1,18 @@
-// Cloudflare Pages Function: POST /api/booking
+// POST /api/booking
 // Receives the contact form and emails it to the artist through Resend
-// (https://resend.com). Deployed automatically with the site; there is no
-// server to run. Settings live in the Pages project, not in the code:
+// (https://resend.com). Settings live in the Cloudflare Worker
+// (Settings → Variables and Secrets), not in the code:
 //
 //   RESEND_API_KEY    (secret)  API key from Resend
 //   BOOKING_TO                  where enquiries are delivered, e.g. booking@artist.com
 //   BOOKING_FROM                verified sender, e.g. "Website <website@artist.com>"
 //   TURNSTILE_SECRET  (secret)  optional; when set, a valid Turnstile token is required
 
-interface Env {
+export interface BookingEnv {
   RESEND_API_KEY?: string;
   BOOKING_TO?: string;
   BOOKING_FROM?: string;
   TURNSTILE_SECRET?: string;
-}
-
-interface Context {
-  request: Request;
-  env: Env;
 }
 
 const LIMITS = { name: 120, email: 200, type: 40, date: 10, message: 4000 } as const;
@@ -30,7 +25,9 @@ const json = (status: number, body: Record<string, unknown>) =>
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
   });
 
-export async function onRequestPost({ request, env }: Context): Promise<Response> {
+export async function handleBooking(request: Request, env: BookingEnv): Promise<Response> {
+  if (request.method !== 'POST') return json(405, { ok: false, error: 'method_not_allowed' });
+
   let form: FormData;
   try {
     form = await request.formData();
@@ -103,6 +100,3 @@ export async function onRequestPost({ request, env }: Context): Promise<Response
   }
   return json(200, { ok: true });
 }
-
-// Anything other than POST.
-export const onRequest = () => json(405, { ok: false, error: 'method_not_allowed' });
