@@ -1,0 +1,6 @@
+# Copy to .dev.vars for local testing with `npx wrangler pages dev dist`.
+# In production set the same names in the Cloudflare Pages project settings.
+RESEND_API_KEY=re_xxxxxxxx
+BOOKING_TO=booking@example.com
+BOOKING_FROM=Website <website@example.com>
+# TURNSTILE_SECRET=

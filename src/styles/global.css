@@ -1,0 +1,139 @@
+@import 'tailwindcss';
+@import './themes.css';
+
+/* Design tokens. The whole look hangs on four colours and one typeface. */
+@theme {
+  --color-ink: #10182b;
+  --color-ink-deep: #0a101f;
+  --color-cobalt: #2f4ba0;
+  --color-paper: #e9e2d0;
+  --color-brass: #e8a33d;
+  --color-mist: #9aa3bd;
+
+  --font-sans: 'Archivo Variable', 'Noto Sans Khmer Variable', 'Khmer Sangam MN', 'Noto Sans Khmer',
+    'Leelawadee UI', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC',
+    'Microsoft YaHei', system-ui, sans-serif;
+
+  --text-lead: 1.375rem;
+  --text-lead--line-height: 1.45;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Khmer stacks marks above and below the line, so every line needs more room.
+     Tailwind's leading/text utilities read these variables. */
+  html:lang(km) {
+    /* Khmer letterforms read smaller than Latin at the same size. */
+    font-size: 106.25%;
+    --leading-snug: 1.7;
+    --text-lead--line-height: 1.8;
+    --text-lg--line-height: 1.8;
+    --text-xl--line-height: 1.75;
+    --leading-bio-intro: 1.65;
+  }
+  html:lang(km) body {
+    line-height: 1.85;
+  }
+  section[id] {
+    scroll-margin-top: 4rem;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-brass);
+    outline-offset: 3px;
+  }
+  .on-brass :focus-visible {
+    outline-color: var(--color-ink);
+  }
+  ::selection {
+    background: var(--color-brass);
+    color: var(--color-ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer components {
+  /* Poster type: Archivo at its narrowest width and heaviest weight. */
+  .display {
+    font-stretch: 62%;
+    font-weight: 900;
+    line-height: 0.86;
+    letter-spacing: -0.012em;
+    text-transform: uppercase;
+  }
+  /* Chinese glyphs have no condensed cut and need more leading. */
+  .display:lang(zh) {
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+  .display:lang(km) {
+    font-stretch: 70%;
+    font-weight: 800;
+    line-height: 1.45;
+    letter-spacing: 0;
+  }
+  .display-sm {
+    font-stretch: 68%;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+  .display-sm:lang(zh) {
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .display-sm:lang(km) {
+    font-stretch: 80%;
+    font-weight: 700;
+    line-height: 1.6;
+  }
+
+  .section-title {
+    font-size: clamp(3.75rem, 13vw, 10rem);
+  }
+  .section-title:lang(zh) {
+    font-size: clamp(2.75rem, 9vw, 6.5rem);
+  }
+  .section-title:lang(km) {
+    font-size: clamp(2.5rem, 8vw, 6rem);
+  }
+
+  /* Duotone: greyscale → ink / colour / paper, via the SVG filters in Base.astro. */
+  .duotone {
+    filter: url(#duo-cobalt);
+  }
+  .duotone-brass {
+    filter: url(#duo-brass);
+  }
+
+  .shell {
+    margin-inline: auto;
+    max-width: 90rem;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 48rem) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  .prose-bio p + p {
+    margin-top: 1.1em;
+  }
+}

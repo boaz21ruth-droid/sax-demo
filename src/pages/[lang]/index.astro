@@ -1,0 +1,97 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import Nav from '@/components/Nav.astro';
+import Hero from '@/components/Hero.astro';
+import About from '@/components/About.astro';
+import Gear from '@/components/Gear.astro';
+import Videos from '@/components/Videos.astro';
+import Gallery from '@/components/Gallery.astro';
+import Discography from '@/components/Discography.astro';
+import Events from '@/components/Events.astro';
+import Contact from '@/components/Contact.astro';
+import Footer from '@/components/Footer.astro';
+import ThemeSwitcher from '@/components/ThemeSwitcher.astro';
+import { fallbackLocale, locales, pick, type Locale } from '@/i18n/ui';
+import { site } from '@/site.config';
+import { inFileOrder } from '@/content/order';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const profileEntry = (await getEntry('profile', lang)) ?? (await getEntry('profile', fallbackLocale))!;
+const profile = profileEntry.data;
+const { Content } = await render(profileEntry);
+
+const [gear, videos, gallery, albums, events] = await Promise.all([
+  getCollection('gear'),
+  getCollection('videos'),
+  getCollection('gallery'),
+  getCollection('albums'),
+  getCollection('events'),
+]);
+
+const pageUrl = new URL(`/${lang}/`, Astro.site).href;
+const today = new Date().toISOString().slice(0, 10);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${Astro.site}#website`,
+      url: Astro.site?.href,
+      name: site.name,
+      inLanguage: locales,
+    },
+    {
+      '@type': ['Person', 'MusicGroup'],
+      '@id': `${Astro.site}#artist`,
+      name: site.name,
+      url: pageUrl,
+      description: profile.description,
+      jobTitle: profile.role,
+      genre: ['Jazz', 'Soul jazz'],
+      image: new URL('/og.jpg', Astro.site).href,
+      email: site.email,
+      sameAs: site.socials.map((s) => s.href),
+      award: profile.awards.map((a) => `${a.title} (${a.year})`),
+      alumniOf: profile.education.map((e) => ({ '@type': 'EducationalOrganization', name: e.place })),
+      album: albums.map(({ data }) => ({
+        '@type': 'MusicAlbum',
+        name: data.title,
+        datePublished: String(data.year),
+        ...(data.link && { url: data.link }),
+      })),
+    },
+    ...events
+      .filter(({ data }) => data.date >= today && data.entry !== 'private')
+      .map(({ data }) => ({
+        '@type': 'MusicEvent',
+        name: pick(data.title, lang),
+        startDate: data.time ? `${data.date}T${data.time}` : data.date,
+        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        location: { '@type': 'Place', name: data.venue, address: pick(data.city, lang) },
+        performer: { '@id': `${Astro.site}#artist` },
+        ...(data.link && { offers: { '@type': 'Offer', url: data.link } }),
+      })),
+  ],
+};
+---
+
+<Base lang={lang} title={`${site.name} | ${profile.role}`} description={profile.description} jsonLd={jsonLd}>
+  <Nav lang={lang} />
+  <main id="main">
+    <Hero lang={lang} role={profile.role} tagline={profile.tagline} basedIn={profile.basedIn} photoAlt={profile.portraitAlt} />
+    <About lang={lang} profile={profile}><Content /></About>
+    <Gear lang={lang} items={gear} />
+    <Videos lang={lang} items={inFileOrder('videos', videos)} />
+    <Gallery lang={lang} items={inFileOrder('gallery', gallery)} />
+    <Discography lang={lang} items={albums} />
+    <Events lang={lang} items={events} />
+    <Contact lang={lang} />
+  </main>
+  <Footer lang={lang} />
+  {site.themeSwitcher && <ThemeSwitcher lang={lang} />}
+</Base>

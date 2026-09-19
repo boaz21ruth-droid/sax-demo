@@ -1,0 +1,69 @@
+[
+  {
+    "id": "night-ferry",
+    "title": "Night Ferry",
+    "year": 2025,
+    "format": {
+      "en": "Album, 9 tracks",
+      "zh": "专辑，9 首",
+      "km": "អាល់ប៊ុម ៩ បទ"
+    },
+    "note": {
+      "en": "Quartet record of originals, cut live in two days.",
+      "zh": "四重奏原创专辑，两天内同期录音完成。",
+      "km": "អាល់ប៊ុមបទនិពន្ធផ្ទាល់របស់ក្រុមបួននាក់ ថតផ្ទាល់ក្នុងរយៈពេលពីរថ្ងៃ។"
+    },
+    "cover": "../../assets/albums/album-1.jpg",
+    "link": "https://open.spotify.com/"
+  },
+  {
+    "id": "brass-hours",
+    "title": "Brass Hours",
+    "year": 2022,
+    "format": {
+      "en": "Album, 11 tracks",
+      "zh": "专辑，11 首",
+      "km": "អាល់ប៊ុម ១១ បទ"
+    },
+    "note": {
+      "en": "Soul and pop standards rearranged for tenor and rhythm section.",
+      "zh": "灵魂乐与流行经典，为次中音和节奏组重新编曲。",
+      "km": "បទសូល និងបទប៉ុបល្បីៗ រៀបចំថ្មីសម្រាប់តេន័រ និងក្រុមចង្វាក់។"
+    },
+    "cover": "../../assets/albums/album-2.jpg",
+    "link": "https://open.spotify.com/"
+  },
+  {
+    "id": "monsoon-blue",
+    "title": "Monsoon Blue",
+    "year": 2019,
+    "format": {
+      "en": "EP, 5 tracks",
+      "zh": "EP，5 首",
+      "km": "EP ៥ បទ"
+    },
+    "note": {
+      "en": "Duo session with piano. Slow tunes for the rainy season.",
+      "zh": "与钢琴的二重奏，写给雨季的慢歌。",
+      "km": "ការថតជាគូជាមួយព្យាណូ។ បទយឺតៗសម្រាប់រដូវវស្សា។"
+    },
+    "cover": "../../assets/albums/album-3.jpg",
+    "link": "https://open.spotify.com/"
+  },
+  {
+    "id": "first-set",
+    "title": "First Set",
+    "year": 2016,
+    "format": {
+      "en": "Album, 8 tracks",
+      "zh": "专辑，8 首",
+      "km": "អាល់ប៊ុម ៨ បទ"
+    },
+    "note": {
+      "en": "The debut. Recorded the week after graduation.",
+      "zh": "首张专辑，毕业后一周录制。",
+      "km": "អាល់ប៊ុមដំបូង ថតមួយសប្តាហ៍ក្រោយពេលបញ្ចប់ការសិក្សា។"
+    },
+    "cover": "../../assets/albums/album-4.jpg"
+  }
+]

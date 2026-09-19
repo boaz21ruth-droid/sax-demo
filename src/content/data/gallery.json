@@ -1,0 +1,74 @@
+[
+  {
+    "id": "live-1",
+    "image": "../../assets/gallery/live-1.jpg",
+    "alt": {
+      "en": "Tenor solo under a white spotlight",
+      "zh": "白色聚光灯下的次中音独奏",
+      "km": "ការផ្លុំតេន័រទោល ក្រោមពន្លឺភ្លើងពណ៌ស"
+    }
+  },
+  {
+    "id": "live-2",
+    "image": "../../assets/gallery/live-2.jpg",
+    "alt": {
+      "en": "The quartet on a festival stage",
+      "zh": "四重奏在音乐节舞台上",
+      "km": "ក្រុមបួននាក់លើឆាកមហោស្រព"
+    }
+  },
+  {
+    "id": "live-3",
+    "image": "../../assets/gallery/live-3.jpg",
+    "alt": {
+      "en": "Close-up of the alto saxophone bell",
+      "zh": "中音萨克斯喇叭口特写",
+      "km": "រូបជិតនៃមាត់ត្រែសាក់សូហ្វូនអាល់តូ"
+    }
+  },
+  {
+    "id": "live-4",
+    "image": "../../assets/gallery/live-4.jpg",
+    "alt": {
+      "en": "Walking through the crowd mid-solo",
+      "zh": "独奏中走进观众席",
+      "km": "ដើរកាត់ហ្វូងទស្សនិកជន ពេលកំពុងផ្លុំទោល"
+    }
+  },
+  {
+    "id": "live-5",
+    "image": "../../assets/gallery/live-5.jpg",
+    "alt": {
+      "en": "Backstage before the show",
+      "zh": "演出前的后台",
+      "km": "នៅក្រោយឆាក មុនពេលសម្តែង"
+    }
+  },
+  {
+    "id": "live-6",
+    "image": "../../assets/gallery/live-6.jpg",
+    "alt": {
+      "en": "Soprano saxophone resting on its stand",
+      "zh": "架子上的高音萨克斯",
+      "km": "សាក់សូហ្វូនសូប្រាណូដាក់លើជើងទម្រ"
+    }
+  },
+  {
+    "id": "live-7",
+    "image": "../../assets/gallery/live-7.jpg",
+    "alt": {
+      "en": "Playing with a DJ on a rooftop",
+      "zh": "在天台与 DJ 同台",
+      "km": "សម្តែងជាមួយ DJ លើដំបូលអគារ"
+    }
+  },
+  {
+    "id": "live-8",
+    "image": "../../assets/gallery/live-8.jpg",
+    "alt": {
+      "en": "Final bow with the band",
+      "zh": "与乐队一起谢幕",
+      "km": "អោនគោរពលាទស្សនិកជនជាមួយក្រុមតន្ត្រី"
+    }
+  }
+]

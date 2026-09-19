@@ -1,0 +1,156 @@
+---
+import { useTranslations, type Locale } from '@/i18n/ui';
+import { site } from '@/site.config';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const chatText = encodeURIComponent(t('contact.chatMessage'));
+const chats = [
+  site.chat.telegram && { label: 'Telegram', href: `https://t.me/${site.chat.telegram}` },
+  site.chat.whatsapp && { label: 'WhatsApp', href: `https://wa.me/${site.chat.whatsapp}?text=${chatText}` },
+].filter((c): c is { label: string; href: string } => Boolean(c));
+const field = 'mt-2 block w-full border-0 border-b-2 border-ink bg-transparent px-0 py-2 text-lg text-ink placeholder:text-ink/50 focus:border-b-4 focus:outline-none';
+---
+
+<section id="contact" class="on-brass bg-brass text-ink">
+  <div class="shell grid gap-x-10 gap-y-12 py-20 lg:grid-cols-12 lg:py-32">
+    <div class="section-head lg:col-[1/-1]">
+      <h2 class="display section-title">{t('contact.title')}</h2>
+      <p class="mt-6 max-w-[52ch] text-lead">{t('contact.lead')}</p>
+    </div>
+
+    <form
+      class="grid gap-7 max-lg:order-2 sm:grid-cols-2 lg:col-[1/8]"
+      action={site.formEndpoint}
+      method="POST"
+      data-contact-form
+      data-error={t('contact.error').replace('{email}', site.email)}
+      data-invalid={t('contact.invalid')}
+      data-sent={t('contact.sent')}
+      data-sending={t('contact.sending')}
+    >
+      <input type="hidden" name="language" value={lang} />
+      {/* Honeypot: hidden from people, tempting for bots. The function drops anything that fills it. */}
+      <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <label class="block font-semibold">
+        {t('contact.name')}
+        <input class={field} type="text" name="name" autocomplete="name" required />
+      </label>
+      <label class="block font-semibold">
+        {t('contact.email')}
+        <input class={field} type="email" name="email" autocomplete="email" required />
+      </label>
+      <label class="block font-semibold">
+        {t('contact.type')}
+        <select class={field} name="type">
+          <option value="performance">{t('contact.type.event')}</option>
+          <option value="lessons">{t('contact.type.lesson')}</option>
+          <option value="other">{t('contact.type.other')}</option>
+        </select>
+      </label>
+      <label class="block font-semibold">
+        {t('contact.date')}
+        <input class={field} type="date" name="date" />
+      </label>
+      <label class="block font-semibold sm:col-span-2">
+        {t('contact.message')}
+        <textarea class={field} name="message" rows="4" required placeholder={t('contact.messageHint')}></textarea>
+      </label>
+      {site.turnstileSiteKey && <div class="sm:col-span-2" data-turnstile={site.turnstileSiteKey}></div>}
+      <div class="flex flex-wrap items-center gap-5 sm:col-span-2">
+        <button type="submit" class="display cursor-pointer bg-ink px-8 py-4 text-2xl text-paper transition-colors hover:bg-cobalt disabled:opacity-60">
+          {t('contact.send')}
+        </button>
+        <p class="max-w-[40ch] font-semibold" role="status" data-form-status></p>
+      </div>
+    </form>
+
+    {/* On phones the chat buttons come before the form; from lg up this is the right-hand column. */}
+    <div class="max-lg:contents lg:col-[9/-1]">
+      {chats.length > 0 && (
+        <div class="max-lg:order-1 lg:mb-12">
+          <h3 class="display-sm border-b-2 border-ink pb-2 text-2xl uppercase">{t('contact.chat')}</h3>
+          <div class="mt-5 grid grid-cols-2 gap-3">
+            {chats.map((c) => (
+              <a
+                href={c.href}
+                class="chat-btn display border-2 border-ink px-4 py-5 text-center text-3xl transition-colors hover:bg-ink hover:text-paper"
+                rel="noopener"
+                target="_blank"
+                lang="en"
+              >
+                {c.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+      <div class="max-lg:order-3">
+        <h3 class="display-sm border-b-2 border-ink pb-2 text-2xl uppercase">{t('contact.direct')}</h3>
+        <a href={`mailto:${site.email}`} class="mt-5 block text-xl font-semibold underline decoration-2 underline-offset-4 hover:decoration-4">{site.email}</a>
+        <ul class="mt-8">
+          {site.socials.map((s) => (
+            <li>
+              <a href={s.href} class="social-link display block py-1 text-5xl hover:text-paper" rel="noopener me" target="_blank" lang="en">{s.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('[data-form-status]')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const label = button.textContent;
+    const challenge = form.querySelector<HTMLElement>('[data-turnstile]');
+    if (challenge) {
+      form.addEventListener(
+        'focusin',
+        () => {
+          const script = document.createElement('script');
+          script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+          script.async = true;
+          script.onload = () =>
+            (window as any).turnstile.render(challenge, { sitekey: challenge.dataset.turnstile, theme: 'light' });
+          document.head.append(script);
+        },
+        { once: true },
+      );
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      button.disabled = true;
+      button.textContent = form.dataset.sending!;
+      status.textContent = '';
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (res.status === 422) {
+          status.textContent = form.dataset.invalid!;
+          return;
+        }
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        status.textContent = form.dataset.sent!;
+      } catch {
+        status.textContent = form.dataset.error!;
+      } finally {
+        button.disabled = false;
+        button.textContent = label;
+        // A Turnstile token is single-use.
+        if (challenge) (window as any).turnstile?.reset();
+      }
+    });
+  }
+</script>

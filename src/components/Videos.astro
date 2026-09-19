@@ -1,0 +1,70 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { pick, useTranslations, type Locale } from '@/i18n/ui';
+
+interface Props {
+  lang: Locale;
+  items: CollectionEntry<'videos'>[];
+}
+const { lang, items } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="videos" class="bg-ink-deep">
+  <div class="shell py-20 lg:py-32">
+    <h2 class="display section-title">{t('videos.title')}</h2>
+
+    <ul class="mt-12 grid gap-x-5 gap-y-10 lg:mt-16 lg:grid-cols-12">
+      {items.map(({ data }, i) => {
+        const title = pick(data.title, lang);
+        return (
+          <li class={i === 0 ? 'lg:col-[1/9] lg:row-span-2' : 'lg:col-[9/-1]'}>
+            {/* Facade: the YouTube iframe is only created after a click. */}
+            <div class="relative aspect-video overflow-hidden bg-cobalt" data-video={data.youtubeId} data-title={title}>
+              <button type="button" class="group absolute inset-0 h-full w-full cursor-pointer text-left" aria-label={`${t('videos.play')}: ${title}`}>
+                {data.poster ? (
+                  <Image
+                    src={data.poster}
+                    alt=""
+                    widths={[480, 800, 1280]}
+                    sizes={i === 0 ? '(min-width: 64rem) 60vw, 100vw' : '(min-width: 64rem) 30vw, 100vw'}
+                    class="duotone absolute inset-0 h-full w-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={`https://i.ytimg.com/vi/${data.youtubeId}/hqdefault.jpg`}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    class="duotone absolute inset-0 h-full w-full object-cover"
+                  />
+                )}
+                <span class:list={['play-key absolute bottom-0 left-0 grid place-items-center bg-brass text-ink transition-colors group-hover:bg-paper', i === 0 ? 'size-20 lg:size-24' : 'size-16']}>
+                  <svg viewBox="0 0 24 24" class="size-2/5" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z" /></svg>
+                </span>
+              </button>
+            </div>
+            <h3 class:list={['display-sm mt-4', i === 0 ? 'text-3xl' : 'text-xl']}>{title}</h3>
+            <p class="mt-1 text-mist">{pick(data.venue, lang)}</p>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach((frame) => {
+    frame.querySelector('button')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${frame.dataset.video}?autoplay=1&rel=0`;
+      iframe.title = frame.dataset.title ?? '';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      iframe.className = 'absolute inset-0 h-full w-full';
+      frame.replaceChildren(iframe);
+      iframe.focus();
+    });
+  });
+</script>

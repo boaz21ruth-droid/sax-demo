@@ -1,0 +1,103 @@
+---
+import { localeNames, locales, useTranslations, type Locale } from '@/i18n/ui';
+import { site } from '@/site.config';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const links = [
+  ['about', t('nav.about')],
+  ['gear', t('nav.gear')],
+  ['videos', t('nav.videos')],
+  ['gallery', t('nav.gallery')],
+  ['music', t('nav.music')],
+  ['events', t('nav.events')],
+  ['contact', t('nav.contact')],
+] as const;
+---
+
+<a
+  href="#main"
+  class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-brass focus:px-4 focus:py-2 focus:text-ink"
+>
+  {t('nav.skip')}
+</a>
+
+<header class="fixed inset-x-0 top-0 z-40 bg-ink/92 backdrop-blur-sm" data-nav>
+  <div class="shell flex h-16 items-center justify-between gap-3 sm:gap-6">
+    <a href={`/${lang}/`} class="display-sm whitespace-nowrap text-xl uppercase tracking-wide" lang="en">{site.name}</a>
+
+    <nav class="hidden items-center gap-7 lg:flex" aria-label="Primary">
+      {links.map(([id, label]) => (
+        <a href={`#${id}`} class="text-[0.95rem] text-paper/85 underline-offset-8 hover:text-brass hover:underline">
+          {label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-2 sm:gap-4">
+      <div class="flex items-center text-sm" role="group" aria-label="Language">
+        {locales.map((l) => (
+          <a
+            href={`/${l}/`}
+            hreflang={l}
+            lang={l}
+            aria-current={l === lang ? 'true' : undefined}
+            class:list={[
+              'whitespace-nowrap px-2 py-1',
+              l === lang ? 'bg-paper text-ink' : 'text-paper/80 hover:text-brass',
+            ]}
+          >
+            {localeNames[l]}
+          </a>
+        ))}
+      </div>
+      <button
+        type="button"
+        class="display-sm -mr-2 whitespace-nowrap px-2 py-2 text-base uppercase lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+        data-open-label={t('nav.menu')}
+        data-close-label={t('nav.close')}
+      >
+        {t('nav.menu')}
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-menu" class="hidden h-[calc(100svh-4rem)] overflow-y-auto bg-ink lg:hidden" aria-label="Primary" data-menu>
+    <ul class="shell flex flex-col py-6">
+      {links.map(([id, label]) => (
+        <li>
+          <a href={`#${id}`} class="display block border-b border-paper/15 py-4 text-5xl hover:text-brass">{label}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      menu.classList.toggle('hidden', !open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.textContent = open ? toggle.dataset.closeLabel! : toggle.dataset.openLabel!;
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+    };
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "live-quartet",
+    "youtubeId": "aqz-KE-bpKQ",
+    "title": {
+      "en": "Quartet live set, full concert",
+      "zh": "四重奏现场，完整音乐会",
+      "km": "ការសម្តែងផ្ទាល់របស់ក្រុមបួននាក់ ការប្រគំតន្ត្រីពេញ"
+    },
+    "venue": {
+      "en": "Riverfront Jazz Festival, 2025",
+      "zh": "2025 河畔爵士音乐节",
+      "km": "មហោស្រពចាសមាត់ទន្លេ ឆ្នាំ២០២៥"
+    },
+    "poster": "../../assets/videos/video-1.jpg"
+  },
+  {
+    "id": "wedding-set",
+    "youtubeId": "aqz-KE-bpKQ",
+    "title": {
+      "en": "Wedding reception highlights",
+      "zh": "婚礼晚宴精选",
+      "km": "វគ្គពិសេសៗពីពិធីជប់លៀងមង្គលការ"
+    },
+    "venue": {
+      "en": "Private event, Bangkok",
+      "zh": "私人活动，曼谷",
+      "km": "កម្មវិធីឯកជន បាងកក"
+    },
+    "poster": "../../assets/videos/video-2.jpg"
+  },
+  {
+    "id": "dj-collab",
+    "youtubeId": "aqz-KE-bpKQ",
+    "title": {
+      "en": "Sax and DJ rooftop session",
+      "zh": "萨克斯 × DJ 天台现场",
+      "km": "សាក់សូហ្វូន និង DJ លើដំបូលអគារ"
+    },
+    "venue": {
+      "en": "Skyline Sessions, Phnom Penh",
+      "zh": "Skyline Sessions，金边",
+      "km": "Skyline Sessions ភ្នំពេញ"
+    },
+    "poster": "../../assets/videos/video-3.jpg"
+  }
+]

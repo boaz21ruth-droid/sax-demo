@@ -1,0 +1,25 @@
+---
+// "/" only redirects: to the visitor's browser language when we have it,
+// otherwise to the default locale.
+import { defaultLocale, htmlLang, locales } from '@/i18n/ui';
+const target = `/${defaultLocale}/`;
+---
+
+<!doctype html>
+<html lang={htmlLang[defaultLocale]}>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={new URL(target, Astro.site)} />
+    <script is:inline define:vars={{ locales, target }}>
+      const want = (navigator.languages || [navigator.language]).map((l) => l.slice(0, 2));
+      const match = want.find((l) => locales.includes(l));
+      location.replace(match ? `/${match}/` : target);
+    </script>
+    <noscript><meta http-equiv="refresh" content={`0;url=${target}`} /></noscript>
+  </head>
+  <body>
+    <a href={target}>Continue</a>
+  </body>
+</html>

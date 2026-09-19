@@ -1,0 +1,38 @@
+{
+  "order": 3,
+  "voice": {
+    "en": "Soprano",
+    "zh": "高音",
+    "km": "សូប្រាណូ"
+  },
+  "model": "Meridian S-50",
+  "finish": {
+    "en": "Gold lacquer, one-piece straight body",
+    "zh": "金漆，一体直管",
+    "km": "ថ្នាំលាបពណ៌មាស តួត្រង់មួយដុំ"
+  },
+  "note": {
+    "en": "Comes out for ceremonies and acoustic sets where the room is quiet.",
+    "zh": "婚礼仪式和不插电演出时用，适合安静的场地。",
+    "km": "ប្រើសម្រាប់ពិធីផ្សេងៗ និងការសម្តែងបែបអាកូស្ទិក នៅទីកន្លែងស្ងប់ស្ងាត់។"
+  },
+  "setup": [
+    {
+      "label": {
+        "en": "Mouthpiece",
+        "zh": "笛头",
+        "km": "មាត់ផ្លុំ"
+      },
+      "value": "Hard rubber, 7"
+    },
+    {
+      "label": {
+        "en": "Reed",
+        "zh": "哨片",
+        "km": "អណ្តាត"
+      },
+      "value": "Classic cut, 3"
+    }
+  ],
+  "image": "../../assets/gear/soprano.jpg"
+}

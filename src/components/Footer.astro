@@ -1,0 +1,17 @@
+---
+import { useTranslations, type Locale } from '@/i18n/ui';
+import { site } from '@/site.config';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<footer class="bg-ink-deep">
+  <div class="shell flex flex-wrap items-center justify-between gap-4 py-8 text-[0.95rem] text-mist">
+    <p>© {new Date().getFullYear()} <span lang="en">{site.name}</span>. {t('footer.rights')}</p>
+    <a href="#main" class="underline-offset-4 hover:text-brass hover:underline">{t('footer.top')}</a>
+  </div>
+</footer>

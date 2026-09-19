@@ -1,0 +1,141 @@
+---
+import '@/styles/global.css';
+import fontLatin from '@fontsource-variable/archivo/files/archivo-latin-standard-normal.woff2?url';
+import fontLatinExt from '@fontsource-variable/archivo/files/archivo-latin-ext-standard-normal.woff2?url';
+import fontBodoni from '@fontsource-variable/bodoni-moda/files/bodoni-moda-latin-standard-normal.woff2?url';
+import fontBodoniItalic from '@fontsource-variable/bodoni-moda/files/bodoni-moda-latin-standard-italic.woff2?url';
+import fontKhmerSerif from '@fontsource-variable/noto-serif-khmer/files/noto-serif-khmer-khmer-wght-normal.woff2?url';
+import fontKhmer from '@fontsource-variable/noto-sans-khmer/files/noto-sans-khmer-khmer-standard-normal.woff2?url';
+import { defaultLocale, htmlLang, locales, ogLocale, type Locale } from '@/i18n/ui';
+import { site, themes } from '@/site.config';
+
+interface Props {
+  lang: Locale;
+  title: string;
+  description: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+const { lang, title, description, jsonLd } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.jpg', Astro.site);
+const altUrl = (l: Locale) => new URL(`/${l}/`, Astro.site).href;
+
+const fontFace = `
+@font-face{font-family:'Archivo Variable';font-style:normal;font-display:swap;font-weight:100 900;font-stretch:62% 125%;src:url(${fontLatin}) format('woff2-variations');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Archivo Variable';font-style:normal;font-display:swap;font-weight:100 900;font-stretch:62% 125%;src:url(${fontLatinExt}) format('woff2-variations');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}`;
+
+// Display faces for the "brass" theme. A declared @font-face costs nothing until
+// text actually uses it, so other themes never download these.
+const LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
+const bodoniFace = `
+@font-face{font-family:'Bodoni Moda Variable';font-style:normal;font-display:swap;font-weight:400 900;src:url(${fontBodoni}) format('woff2-variations');unicode-range:${LATIN}}
+@font-face{font-family:'Bodoni Moda Variable';font-style:italic;font-display:swap;font-weight:400 900;src:url(${fontBodoniItalic}) format('woff2-variations');unicode-range:${LATIN}}`;
+
+// The Khmer face (≈100 KB, with weight and width axes to match Archivo) is only
+// declared on Khmer pages, so English and Chinese visitors never download it.
+const khmerFace = `
+@font-face{font-family:'Noto Sans Khmer Variable';font-style:normal;font-display:swap;font-weight:100 900;font-stretch:62.5% 100%;src:url(${fontKhmer}) format('woff2-variations');unicode-range:U+1780-17FF,U+19E0-19FF,U+200C-200D,U+25CC}
+@font-face{font-family:'Noto Serif Khmer Variable';font-style:normal;font-display:swap;font-weight:100 900;src:url(${fontKhmerSerif}) format('woff2-variations');unicode-range:U+1780-17FF,U+19E0-19FF,U+200C-200D,U+25CC}`;
+
+// Preload only what the default theme paints first. (While the demo switcher is
+// used to view another theme, that theme's display font loads a moment later.)
+const preloads = [
+  fontLatin,
+  site.theme === 'brass' && fontBodoniItalic,
+  lang === 'km' && fontKhmer,
+  lang === 'km' && site.theme === 'brass' && fontKhmerSerif,
+].filter((href): href is string => Boolean(href));
+
+// Demo switcher: apply ?theme=… or the last choice before first paint.
+const themeScript = `try{var t=new URLSearchParams(location.search).get('theme')||localStorage.getItem('theme');if(${JSON.stringify(themes)}.indexOf(t)>-1)document.documentElement.dataset.theme=t}catch(e){}`;
+---
+
+<!doctype html>
+<html lang={htmlLang[lang]} data-theme={site.theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {locales.map((l) => <link rel="alternate" hreflang={htmlLang[l]} href={altUrl(l)} />)}
+    <link rel="alternate" hreflang="x-default" href={altUrl(defaultLocale)} />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={ogLocale[lang]} />
+    {locales.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#10182b" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    {preloads.map((href) => <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />)}
+    <style set:html={fontFace + bodoniFace + (lang === 'km' ? khmerFace : '')} />
+    {site.themeSwitcher && <script is:inline set:html={themeScript} />}
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body class="bg-ink text-paper">
+    <!-- Duotone gradient maps: shadows → ink, midtones → colour, highlights → paper -->
+    <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+      <filter id="duo-cobalt" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0"></feColorMatrix>
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0.063 0.184 0.914"></feFuncR>
+          <feFuncG type="table" tableValues="0.094 0.294 0.886"></feFuncG>
+          <feFuncB type="table" tableValues="0.169 0.627 0.816"></feFuncB>
+        </feComponentTransfer>
+      </filter>
+      <filter id="duo-brass" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0"></feColorMatrix>
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0.063 0.784 0.914"></feFuncR>
+          <feFuncG type="table" tableValues="0.094 0.455 0.886"></feFuncG>
+          <feFuncB type="table" tableValues="0.169 0.122 0.816"></feFuncB>
+        </feComponentTransfer>
+      </filter>
+      <!-- brass theme: wine and gold -->
+      <filter id="duo-wine" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0"></feColorMatrix>
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0.07 0.29 0.55 0.85"></feFuncR>
+          <feFuncG type="table" tableValues="0.04 0.08 0.26 0.76"></feFuncG>
+          <feFuncB type="table" tableValues="0.05 0.14 0.28 0.66"></feFuncB>
+        </feComponentTransfer>
+      </filter>
+      <filter id="duo-gold" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0"></feColorMatrix>
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0.07 0.663 0.937"></feFuncR>
+          <feFuncG type="table" tableValues="0.04 0.51 0.902"></feFuncG>
+          <feFuncB type="table" tableValues="0.05 0.184 0.824"></feFuncB>
+        </feComponentTransfer>
+      </filter>
+      <!-- spotlight theme: hard black and white, and a magenta stage gel -->
+      <filter id="duo-mono" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0"></feColorMatrix>
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0 0.2 0.64 0.98"></feFuncR>
+          <feFuncG type="table" tableValues="0 0.19 0.62 0.95"></feFuncG>
+          <feFuncB type="table" tableValues="0 0.18 0.58 0.9"></feFuncB>
+        </feComponentTransfer>
+      </filter>
+      <filter id="duo-gel" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0.2126 0.7152 0.0722 0 0  0 0 0 1 0"></feColorMatrix>
+        <feComponentTransfer>
+          <feFuncR type="table" tableValues="0 0.761 1"></feFuncR>
+          <feFuncG type="table" tableValues="0 0.208 0.914"></feFuncG>
+          <feFuncB type="table" tableValues="0 0.42 0.816"></feFuncB>
+        </feComponentTransfer>
+      </filter>
+    </svg>
+    <slot />
+  </body>
+</html>

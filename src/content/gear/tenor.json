@@ -1,0 +1,38 @@
+{
+  "order": 2,
+  "voice": {
+    "en": "Tenor",
+    "zh": "次中音",
+    "km": "តេន័រ"
+  },
+  "model": "Meridian T-66",
+  "finish": {
+    "en": "Dark vintage lacquer",
+    "zh": "深色复古漆面",
+    "km": "ថ្នាំលាបពណ៌ចាស់បែបបុរាណ"
+  },
+  "note": {
+    "en": "For ballads, soul sets and anything that needs weight in the low end.",
+    "zh": "用于抒情曲和灵魂乐，低音区需要厚度的时候就换它。",
+    "km": "សម្រាប់បទមនោសញ្ចេតនា បទសូល និងគ្រប់បទដែលត្រូវការសំឡេងទាបធ្ងន់ណែន។"
+  },
+  "setup": [
+    {
+      "label": {
+        "en": "Mouthpiece",
+        "zh": "笛头",
+        "km": "មាត់ផ្លុំ"
+      },
+      "value": "Metal, 7*"
+    },
+    {
+      "label": {
+        "en": "Reed",
+        "zh": "哨片",
+        "km": "អណ្តាត"
+      },
+      "value": "Jazz cut, 3"
+    }
+  ],
+  "image": "../../assets/gear/tenor.jpg"
+}

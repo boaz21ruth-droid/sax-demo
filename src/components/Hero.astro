@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+import heroPhoto from '@/assets/photos/hero.jpg';
+import { useTranslations, type Locale } from '@/i18n/ui';
+import { site } from '@/site.config';
+
+interface Props {
+  lang: Locale;
+  role: string;
+  tagline: string;
+  basedIn: string;
+  photoAlt: string;
+}
+const { lang, role, tagline, basedIn, photoAlt } = Astro.props;
+const t = useTranslations(lang);
+const nameLines = site.name.split(' ');
+---
+
+<section class="hero relative grid min-h-svh grid-cols-1 bg-ink pt-16 lg:grid-cols-12 lg:grid-rows-[1fr_auto]">
+  <div class="hero-photo relative min-h-[54svh] overflow-hidden bg-cobalt lg:col-[5/-1] lg:row-[1/2] lg:min-h-0">
+    <Image
+      src={heroPhoto}
+      alt={photoAlt}
+      widths={[640, 960, 1280, 1600]}
+      sizes="(min-width: 64rem) 67vw, 100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="duotone absolute inset-0 h-full w-full object-cover object-[50%_30%]"
+    />
+  </div>
+
+  <h1
+    class="hero-name display pointer-events-none relative z-10 -mt-[0.78em] px-5 text-[clamp(5.5rem,27vw,13rem)] md:px-10 lg:col-[1/11] lg:row-[1/2] lg:mt-0 lg:self-end lg:pb-6 lg:text-[clamp(9rem,17.5vw,19rem)]"
+    lang="en"
+  >
+    {nameLines.map((line) => (
+      <span class="block overflow-hidden pt-[0.06em]"><span class="hero-line block">{line}</span></span>
+    ))}
+  </h1>
+
+  <div class="hero-meta flex flex-col justify-center gap-1 px-5 py-7 md:px-10 lg:col-[1/5] lg:row-[2/3] lg:py-10">
+    <p class="display-sm text-3xl uppercase text-brass lg:text-4xl">{role}</p>
+    <p class="text-mist">{basedIn}</p>
+  </div>
+
+  <a
+    href="#contact"
+    class="hero-cta on-brass group flex items-end bg-brass px-5 py-7 text-ink transition-colors hover:bg-paper md:px-10 lg:col-[5/8] lg:row-[2/3] lg:px-8 lg:py-10"
+  >
+    <span class="display text-4xl underline decoration-[0.09em] underline-offset-[0.14em] lg:text-[2.75rem]">{t('cta.book')}</span>
+  </a>
+
+  <p class="hero-tag flex items-center bg-paper px-5 py-7 text-lead text-ink md:px-10 lg:col-[8/-1] lg:row-[2/3] lg:px-8 lg:py-10">
+    <span class="max-w-[34ch]">{tagline}</span>
+  </p>
+</section>
+

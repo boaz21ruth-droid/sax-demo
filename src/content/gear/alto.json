@@ -1,0 +1,46 @@
+{
+  "order": 1,
+  "voice": {
+    "en": "Alto",
+    "zh": "中音",
+    "km": "អាល់តូ"
+  },
+  "model": "Meridian A-67",
+  "finish": {
+    "en": "Unlacquered brass, rolled tone holes",
+    "zh": "无漆黄铜，卷边音孔",
+    "km": "លង្ហិនមិនលាបថ្នាំ រន្ធសំឡេងគែមរមូរ"
+  },
+  "note": {
+    "en": "The main horn. Bright enough to lead a dance floor, dark enough for a ballad.",
+    "zh": "主力乐器。音色明亮时能带动舞池，收起来也能吹抒情曲。",
+    "km": "ឧបករណ៍ចម្បង។ សំឡេងភ្លឺល្មមនាំមុខក្នុងកម្មវិធីរាំ ហើយក៏ទន់ល្មមសម្រាប់បទមនោសញ្ចេតនា។"
+  },
+  "setup": [
+    {
+      "label": {
+        "en": "Mouthpiece",
+        "zh": "笛头",
+        "km": "មាត់ផ្លុំ"
+      },
+      "value": "Hard rubber, 6*"
+    },
+    {
+      "label": {
+        "en": "Reed",
+        "zh": "哨片",
+        "km": "អណ្តាត"
+      },
+      "value": "Jazz cut, 2.5"
+    },
+    {
+      "label": {
+        "en": "Ligature",
+        "zh": "卡子",
+        "km": "ខ្សែរឹត"
+      },
+      "value": "Brass, two-screw"
+    }
+  ],
+  "image": "../../assets/gear/alto.jpg"
+}

@@ -1,0 +1,96 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { htmlLang, pick, useTranslations, type Locale } from '@/i18n/ui';
+
+interface Props {
+  lang: Locale;
+  items: CollectionEntry<'events'>[];
+}
+const { lang, items } = Astro.props;
+const t = useTranslations(lang);
+
+// Split at build time; the script below re-checks in the browser so a show
+// moves to "Played" on the day after, even if the site has not been rebuilt.
+const today = new Date().toISOString().slice(0, 10);
+const sorted = [...items].sort((a, b) => a.data.date.localeCompare(b.data.date));
+const upcoming = sorted.filter((e) => e.data.date >= today);
+const past = sorted.filter((e) => e.data.date < today).reverse();
+
+const asDate = (iso: string) => new Date(`${iso}T00:00:00Z`);
+// Latin digits in every language, so the big day numerals stay in the display face.
+const fmt = (iso: string, opts: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat(`${htmlLang[lang]}-u-nu-latn`, { timeZone: 'UTC', ...opts }).format(asDate(iso));
+const entryLabel = { tickets: t('events.tickets'), free: t('events.free'), private: t('events.private') };
+---
+
+<section id="events" class="bg-ink">
+  <div class="shell py-20 lg:py-32">
+    <h2 class="display section-title">{t('events.title')}</h2>
+
+    <h3 class="display-sm mt-12 text-2xl uppercase text-brass lg:mt-16">{t('events.upcoming')}</h3>
+    <p class="mt-4 max-w-[50ch] text-mist" data-events-empty hidden={upcoming.length > 0}>{t('events.none')}</p>
+    <ul class="mt-2" data-events="upcoming">
+      {upcoming.map(({ data }) => (
+        <li class="event grid grid-cols-[5.5rem_1fr] items-center gap-x-5 gap-y-2 border-b border-paper/15 py-6 md:grid-cols-[9rem_1fr_auto] md:gap-x-8" data-date={data.date}>
+          <time datetime={data.date} class="block">
+            <span class="event-day display block text-7xl text-paper md:text-8xl">{fmt(data.date, { day: '2-digit' }).replace(/\D/g, '')}</span>
+            <span class="display-sm mt-1 block text-base uppercase text-mist">{fmt(data.date, { month: 'short', year: 'numeric' })}</span>
+          </time>
+          <div>
+            <p class="display-sm text-2xl md:text-3xl">{pick(data.title, lang)}</p>
+            <p class="mt-1 text-mist">
+              {data.venue}, {pick(data.city, lang)}{data.time && <span>, {data.time}</span>}
+            </p>
+          </div>
+          <p class="event-entry col-start-2 md:col-start-3">
+            {data.entry === 'tickets' && data.link ? (
+              <a href={data.link} class="on-brass inline-block bg-brass px-5 py-2.5 font-semibold text-ink hover:bg-paper" rel="noopener" target="_blank">
+                {t('events.tickets')}
+              </a>
+            ) : (
+              <span class="text-mist">{entryLabel[data.entry]}</span>
+            )}
+          </p>
+        </li>
+      ))}
+    </ul>
+
+    <h3 class="display-sm mt-16 text-2xl uppercase text-mist">{t('events.past')}</h3>
+    <ul class="mt-2" data-events="past">
+      {past.map(({ data }) => (
+        <li class="grid grid-cols-[5.5rem_1fr] gap-x-5 border-b border-paper/10 py-4 text-mist md:grid-cols-[9rem_1fr] md:gap-x-8">
+          <time datetime={data.date} class="display-sm text-base uppercase">{fmt(data.date, { day: 'numeric', month: 'short', year: 'numeric' })}</time>
+          <p>
+            <span class="text-paper/85">{pick(data.title, lang)}</span>, {data.venue}, {pick(data.city, lang)}
+          </p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .event.is-past {
+    opacity: 0.55;
+  }
+  .event.is-past .event-entry {
+    display: none;
+  }
+</style>
+
+<script>
+  const upcoming = document.querySelector<HTMLElement>('[data-events="upcoming"]');
+  const past = document.querySelector<HTMLElement>('[data-events="past"]');
+  if (upcoming && past) {
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    upcoming.querySelectorAll<HTMLElement>('[data-date]').forEach((item) => {
+      if (item.dataset.date! < today) {
+        item.classList.add('is-past');
+        past.prepend(item);
+      }
+    });
+    const empty = document.querySelector<HTMLElement>('[data-events-empty]');
+    if (empty) empty.hidden = upcoming.children.length > 0;
+  }
+</script>

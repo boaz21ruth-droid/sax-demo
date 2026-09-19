@@ -1,0 +1,63 @@
+---
+// Demo-only control for comparing the three visual directions. It is tool
+// chrome, not part of any design, so it uses the system font and neutral colours.
+// Switch it off with `themeSwitcher: false` in src/site.config.ts.
+import { useTranslations, type Locale } from '@/i18n/ui';
+import { site, themes } from '@/site.config';
+
+interface Props {
+  lang: Locale;
+}
+const t = useTranslations(Astro.props.lang);
+const letters = ['A', 'B', 'C'];
+---
+
+<div
+  class="fixed top-[4.75rem] left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 rounded-full bg-black/85 p-1.5 font-[system-ui,sans-serif] text-[0.8125rem] leading-none text-white shadow-lg ring-1 ring-white/20 backdrop-blur-sm lg:left-auto lg:right-5 lg:translate-x-0"
+  role="group"
+  aria-label={t('theme.label')}
+  data-theme-switcher
+>
+  <span class="hidden pl-3 pr-1 text-white/70 sm:inline" lang={Astro.props.lang}>{t('theme.label')}</span>
+  {themes.map((name, i) => (
+    <button
+      type="button"
+      class="cursor-pointer whitespace-nowrap rounded-full px-3 py-2 aria-pressed:bg-white aria-pressed:text-black hover:bg-white/15 aria-pressed:hover:bg-white"
+      data-set-theme={name}
+      aria-pressed={name === site.theme ? 'true' : 'false'}
+    >
+      <b>{letters[i]}</b>
+      <span class="ml-1">{t(`theme.${name}`)}</span>
+    </button>
+  ))}
+</div>
+
+<style>
+  /* On phones only the active style shows its name; the others collapse to A / B / C. */
+  @media (max-width: 40rem) {
+    button[aria-pressed='false'] span {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-set-theme]')];
+  const mark = () => buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.setTheme === root.dataset.theme)));
+  mark();
+  buttons.forEach((button) =>
+    button.addEventListener('click', () => {
+      const theme = button.dataset.setTheme!;
+      root.dataset.theme = theme;
+      try {
+        localStorage.setItem('theme', theme);
+      } catch {}
+      // Keep the choice in the address bar so the link can be shared as-is.
+      const url = new URL(location.href);
+      url.searchParams.set('theme', theme);
+      history.replaceState(null, '', url);
+      mark();
+    }),
+  );
+</script>

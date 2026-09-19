@@ -1,0 +1,119 @@
+[
+  {
+    "id": "2026-10-03-riverfront",
+    "date": "2026-10-03",
+    "time": "20:30",
+    "title": {
+      "en": "Vann Rivers Quartet",
+      "zh": "Vann Rivers 四重奏",
+      "km": "ក្រុមបួននាក់ Vann Rivers"
+    },
+    "venue": "Riverfront Jazz Club",
+    "city": {
+      "en": "Phnom Penh",
+      "zh": "金边",
+      "km": "ភ្នំពេញ"
+    },
+    "entry": "tickets",
+    "link": "https://example.com/tickets"
+  },
+  {
+    "id": "2026-10-24-skyline",
+    "date": "2026-10-24",
+    "time": "21:00",
+    "title": {
+      "en": "Skyline Sessions with DJ Lune",
+      "zh": "Skyline Sessions × DJ Lune",
+      "km": "Skyline Sessions ជាមួយ DJ Lune"
+    },
+    "venue": "Skyline Rooftop",
+    "city": {
+      "en": "Bangkok",
+      "zh": "曼谷",
+      "km": "បាងកក"
+    },
+    "entry": "free"
+  },
+  {
+    "id": "2026-11-14-gala",
+    "date": "2026-11-14",
+    "title": {
+      "en": "Charity gala dinner",
+      "zh": "慈善晚宴",
+      "km": "ពិធីជប់លៀងសប្បុរសធម៌"
+    },
+    "venue": "Grand Lotus Hotel",
+    "city": {
+      "en": "Siem Reap",
+      "zh": "暹粒",
+      "km": "សៀមរាប"
+    },
+    "entry": "private"
+  },
+  {
+    "id": "2026-12-31-countdown",
+    "date": "2026-12-31",
+    "time": "22:00",
+    "title": {
+      "en": "New Year's Eve countdown show",
+      "zh": "跨年倒数演出",
+      "km": "ការសម្តែងរាប់ថយក្រោយឆ្លងឆ្នាំសកល"
+    },
+    "venue": "Harbour Hall",
+    "city": {
+      "en": "Singapore",
+      "zh": "新加坡",
+      "km": "សិង្ហបុរី"
+    },
+    "entry": "tickets",
+    "link": "https://example.com/tickets"
+  },
+  {
+    "id": "2026-08-15-festival",
+    "date": "2026-08-15",
+    "title": {
+      "en": "Delta Jazz Festival, main stage",
+      "zh": "Delta 爵士音乐节 主舞台",
+      "km": "មហោស្រព Delta Jazz ឆាកធំ"
+    },
+    "venue": "Festival Park",
+    "city": {
+      "en": "Ho Chi Minh City",
+      "zh": "胡志明市",
+      "km": "ទីក្រុងហូជីមិញ"
+    },
+    "entry": "tickets"
+  },
+  {
+    "id": "2026-06-21-music-day",
+    "date": "2026-06-21",
+    "title": {
+      "en": "World Music Day open-air concert",
+      "zh": "世界音乐日露天音乐会",
+      "km": "ការប្រគំតន្ត្រីក្រៅអគារ ទិវាតន្ត្រីពិភពលោក"
+    },
+    "venue": "Old Market Square",
+    "city": {
+      "en": "Phnom Penh",
+      "zh": "金边",
+      "km": "ភ្នំពេញ"
+    },
+    "entry": "free"
+  },
+  {
+    "id": "2026-03-07-residency",
+    "date": "2026-03-07",
+    "title": {
+      "en": "Hotel lounge residency, closing night",
+      "zh": "酒店驻场演出 收官之夜",
+      "km": "ការសម្តែងប្រចាំនៅឡោនសណ្ឋាគារ យប់បិទកម្មវិធី"
+    },
+    "venue": "The Indigo Room",
+    "city": {
+      "en": "Bangkok",
+      "zh": "曼谷",
+      "km": "បាងកក"
+    },
+    "entry": "free"
+  }
+]

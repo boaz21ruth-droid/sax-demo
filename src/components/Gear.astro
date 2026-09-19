@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { pick, useTranslations, type Locale } from '@/i18n/ui';
+
+interface Props {
+  lang: Locale;
+  items: CollectionEntry<'gear'>[];
+}
+const { lang, items } = Astro.props;
+const t = useTranslations(lang);
+const horns = [...items].sort((a, b) => a.data.order - b.data.order);
+---
+
+<section id="gear" class="bg-ink">
+  <div class="shell py-20 lg:py-32">
+    <div class="section-head grid gap-6 lg:grid-cols-12 lg:items-end">
+      <h2 class="display section-title lg:col-[1/9]">{t('gear.title')}</h2>
+      <p class="max-w-[36ch] text-lead text-mist lg:col-[9/-1] lg:pb-3">{t('gear.lead')}</p>
+    </div>
+
+    <ul class="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-2 lg:grid-rows-2">
+      {horns.map(({ data }, i) => {
+        const main = i === 0;
+        return (
+          <li class:list={['grid bg-ink-deep', main ? 'lg:row-span-2 lg:grid-rows-[1fr_auto]' : 'sm:grid-cols-[2fr_3fr]']}>
+            <div class:list={['relative overflow-hidden', main ? 'min-h-72' : 'min-h-56']}>
+              <Image
+                src={data.image}
+                alt=""
+                widths={[480, 720, 1080]}
+                sizes={main ? '(min-width: 64rem) 45vw, 100vw' : '(min-width: 64rem) 18vw, (min-width: 40rem) 40vw, 100vw'}
+                class:list={['absolute inset-0 h-full w-full object-cover', main ? 'duotone' : 'duotone-brass']}
+              />
+              <p class:list={['gear-voice display absolute bottom-3 left-4 text-paper', main ? 'text-8xl lg:text-9xl' : 'text-6xl']}>
+                {pick(data.voice, lang)}
+              </p>
+            </div>
+            <div class="p-6 lg:p-8">
+              <h3 class="display-sm text-2xl" lang="en">{data.model}</h3>
+              <p class="mt-1 text-mist">{pick(data.finish, lang)}</p>
+              <p class="mt-4 max-w-[48ch]">{pick(data.note, lang)}</p>
+              <dl class="mt-5 grid grid-cols-[auto_1fr] gap-x-5 gap-y-1 border-t border-paper/15 pt-4 text-[0.95rem]">
+                {data.setup.map((row) => (
+                  <>
+                    <dt class="text-mist">{pick(row.label, lang)}</dt>
+                    <dd>{row.value}</dd>
+                  </>
+                ))}
+              </dl>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</section>
